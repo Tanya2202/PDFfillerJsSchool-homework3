@@ -14,6 +14,9 @@ const RESET_VALUE = 2;
 let scores = [0, 0];
 let activePlayer = 0;
 let current = 0;
+let defaultLimit = 100;
+let limit = defaultLimit;
+
 const diceElement = document.querySelector('.dice');
 const diceElement1 = document.querySelector('.dice-1');
 
@@ -26,7 +29,15 @@ const initGame = () => {
   diceElement1.style.display = 'none';
 }
 
+
 initGame();
+
+document.querySelector('.confirm').addEventListener('click', function() {
+  limit = document.getElementById("limit").value;
+  if (limit == '') {
+    limit = defaultLimit;
+  }
+});
 
 document.querySelector('.btn-roll').addEventListener('click', function() {
   let dice = Math.floor(Math.random() * 6) + 1;
@@ -42,8 +53,9 @@ document.querySelector('.btn-roll').addEventListener('click', function() {
     current += dice + dice1;
     document.getElementById('current-'+activePlayer).textContent = current;
 
-    if (scores[activePlayer] + current >= 20) {
+    if (scores[activePlayer] + current >= limit) {
       alert(`Player ${activePlayer} won!!!`);
+      initGame();
     }
     
   } else {
@@ -66,7 +78,6 @@ document.querySelector('.btn-hold').addEventListener('click', function() {
   document.querySelector(`#score-${activePlayer}`).textContent = scores[activePlayer];
   changePlayer();
 });
-
 
 document.querySelector('.btn-new').addEventListener('click', function() {
   initGame();
