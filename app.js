@@ -22,42 +22,64 @@ const diceElement = document.querySelector('.dice');
 const diceElement1 = document.querySelector('.dice-1');
 
 let Gamer = function(name) {
-    this.name = name
-    this.score = 0
+  this.name = name;
+  this.score = 0;
+  this.wins = 0;
 }
 
 Gamer.prototype.getScore  = function() {
-    return this.score
+  return this.score
 };
 
 Gamer.prototype.setScore  = function(score) {
-    this.score = score
+  this.score = score
 };
 
 Gamer.prototype.resetScore  = function() {
-    this.score = 0
+  this.score = 0
 };
+
+Gamer.prototype.setWins  = function(wins) {
+  this.wins = wins
+};
+
+function createPlayer(name, wins) {
+  const player = new Gamer(name);
+  player.resetScore();
+  player.setWins(wins);
+
+  return player;
+}
 
 const initGame = () => {
   for(let i in ['0', '1']) {
-      const playerName = prompt("#Введіть ім'я гравця " + side[i])
-      const player = new Gamer(playerName)
-      player.resetScore()
-      players[i] = player
+    const playerName = prompt("#Введіть ім'я гравця " + side[i])
 
-      document.getElementById('name-' + i).innerHTML = playerName;
-      document.querySelector('#current-' + i).textContent = 0;
-      document.querySelector('#score-' + i).textContent = 0;
+    const playerWins = localStorage.getItem('dice_' + playerName)
+
+    let player = createPlayer(playerName, 0)
+
+    if (playerWins && playerWins !== null) {
+      if (confirm(`${playerName} - це точно Ви?`)) {
+        player = createPlayer(playerName, playerWins)
+      }
+    }
+
+    players[i] = player
+
+    document.getElementById('name-' + i).innerHTML = playerName;
+    document.querySelector('#current-' + i).textContent = 0;
+    document.querySelector('#score-' + i).textContent = 0;
   }
 
   activePlayer = 0;
   current = 0;
 
   if (!document.querySelector(`.player-0-panel`).classList.contains('active')) {
-      document.querySelector(`.player-0-panel`).classList.add('active');
+    document.querySelector(`.player-0-panel`).classList.add('active');
   }
   if (document.querySelector(`.player-1-panel`).classList.contains('active')) {
-      document.querySelector(`.player-1-panel`).classList.remove('active');
+    document.querySelector(`.player-1-panel`).classList.remove('active');
   }
 
   diceElement.style.display = 'none';
@@ -89,7 +111,13 @@ document.querySelector('.btn-roll').addEventListener('click', function() {
     document.getElementById('current-'+activePlayer).textContent = current;
 
     if ((players[activePlayer]).getScore() + current >= limit) {
-      alert(`Player ${(players[activePlayer]).name} won!!!`);
+      const playerName = (players[activePlayer]).name
+      const playerWins = parseInt((players[activePlayer]).wins) + 1
+
+      localStorage.setItem('dice_' + playerName, playerWins)
+
+      alert(`Player ${playerName} won!!!`);
+
       initGame();
     }
 
@@ -117,4 +145,32 @@ document.querySelector('.btn-hold').addEventListener('click', function() {
 
 document.querySelector('.btn-new').addEventListener('click', function() {
   initGame();
+});
+
+document.querySelector('#showWinners').addEventListener('click', function() {
+  const localStorageKeys = Object.keys(localStorage);
+  let diceKeys = [];
+  localStorageKeys.forEach((key) => {
+    if (key.includes('dice_')) {
+        diceKeys.push(key);
+    }
+  });
+
+  let winners = {};
+  for (let i = 0; i < diceKeys.length; i++) {
+    const winsCount = localStorage.getItem(diceKeys[i]);
+    winners[diceKeys[i]] = winsCount;
+  }
+
+  let winnersSorted = Object.keys(winners).sort(function(a, b) {
+    return winners[b] - winners[a];
+  });
+
+  let winnersString = '';
+  winnersSorted.forEach((winner, key) => {
+    const winnerStr = `${key + 1}. ${winner.replace('dice_', '')} - ${winners[winner]} \n`;
+    winnersString += winnerStr;
+  });
+
+  alert(winnersString);
 });
