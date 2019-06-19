@@ -11,20 +11,55 @@ GAME RULES:
 
 const RESET_VALUE = 2;
 
-let scores = [0, 0];
+let players = [];
 let activePlayer = 0;
 let current = 0;
 let defaultLimit = 100;
 let limit = defaultLimit;
+const side = ['зліва', 'справа'];
 
 const diceElement = document.querySelector('.dice');
 const diceElement1 = document.querySelector('.dice-1');
 
+let Gamer = function(name) {
+    this.name = name
+    this.score = 0
+}
+
+Gamer.prototype.getScore  = function() {
+    return this.score
+};
+
+Gamer.prototype.setScore  = function(score) {
+    this.score = score
+};
+
+Gamer.prototype.resetScore  = function() {
+    this.score = 0
+};
+
 const initGame = () => {
-  document.querySelector('#current-0').textContent = 0;
-  document.querySelector('#current-1').textContent = 0;
-  document.querySelector('#score-0').textContent = 0;
-  document.querySelector('#score-1').textContent = 0;
+  for(let i in ['0', '1']) {
+      const playerName = prompt("#Введіть ім'я гравця " + side[i])
+      const player = new Gamer(playerName)
+      player.resetScore()
+      players[i] = player
+
+      document.getElementById('name-' + i).innerHTML = playerName;
+      document.querySelector('#current-' + i).textContent = 0;
+      document.querySelector('#score-' + i).textContent = 0;
+  }
+
+  activePlayer = 0;
+  current = 0;
+
+  if (!document.querySelector(`.player-0-panel`).classList.contains('active')) {
+      document.querySelector(`.player-0-panel`).classList.add('active');
+  }
+  if (document.querySelector(`.player-1-panel`).classList.contains('active')) {
+      document.querySelector(`.player-1-panel`).classList.remove('active');
+  }
+
   diceElement.style.display = 'none';
   diceElement1.style.display = 'none';
 }
@@ -53,11 +88,11 @@ document.querySelector('.btn-roll').addEventListener('click', function() {
     current += dice + dice1;
     document.getElementById('current-'+activePlayer).textContent = current;
 
-    if (scores[activePlayer] + current >= limit) {
-      alert(`Player ${activePlayer} won!!!`);
+    if ((players[activePlayer]).getScore() + current >= limit) {
+      alert(`Player ${(players[activePlayer]).name} won!!!`);
       initGame();
     }
-    
+
   } else {
     changePlayer();
   }
@@ -74,8 +109,9 @@ const changePlayer = () => {
 }
 
 document.querySelector('.btn-hold').addEventListener('click', function() {
-  scores[activePlayer] += current;
-  document.querySelector(`#score-${activePlayer}`).textContent = scores[activePlayer];
+  let activePlayerIns = players[activePlayer]
+  activePlayerIns.setScore(activePlayerIns.getScore() + current);
+  document.querySelector(`#score-${activePlayer}`).textContent = activePlayerIns.getScore();
   changePlayer();
 });
 
