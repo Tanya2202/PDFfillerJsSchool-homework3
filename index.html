@@ -4,12 +4,21 @@
         <meta charset="UTF-8">
         <link href="https://fonts.googleapis.com/css?family=Lato:100,300,600" rel="stylesheet" type="text/css">
         <link href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css">
-        <link type="text/css" rel="stylesheet" href="style.css">
+        <link type="text/css" rel="stylesheet" href="src/css/style.css">
         
         <title>Game</title>
     </head>
 
     <body>
+    	<form name="limit">
+                <p><b>Введіть ліміт:</b><br>
+                <input type="number" size="3" min="1" max="999" value="100" placeholder="Enter limit" id="limit">
+                <p><input type="button"  value="Зафіксувати" class="confirm">
+                <input type="reset" value="Очистити"></p>
+        </form>
+        
+        <button id="showWinners">Show winners</button>
+
         <div class="wrapper clearfix">
             <div class="player-0-panel active">
                 <div class="player-name" id="name-0">Игрок 1</div>
@@ -33,9 +42,10 @@
             <button class="btn-roll"><i class="ion-ios-loop"></i>Бросок</button>
             <button class="btn-hold"><i class="ion-ios-download-outline"></i>Сохранить</button>
             
-            <img src="dice-5.png" alt="Dice" class="dice">
+            <img src="src/css/dice-5.png" alt="Dice" class="dice">
+            <img src="src/css/dice-2.png" alt="Dice-1" class="dice-1">
         </div>
         
-        <script src="app.js"></script>
+        <script src="build/build.js"></script>
     </body>
 </html>
